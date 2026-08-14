@@ -74,6 +74,15 @@ a:hover { color: var(--accent-hover); }
 }
 .nav-download:hover { background: var(--accent-hover); }
 
+.nav-web {
+  color: var(--text) !important;
+  background: var(--success);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.nav-web:hover { filter: brightness(1.1); }
+
 /* ------------------------------------------------------------------ hero */
 .hero {
   padding: 64px 0 56px;
