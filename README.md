@@ -118,8 +118,9 @@ browser. It reuses the exact same conversion engine, so output is identical.
 **Important:** files are processed on the machine running the server, not in
 the client's browser.
 
-> **Launch the web app →** open **http://127.0.0.1:8000** in your browser
-> (after starting the server below).
+> **Launch the app →**
+> - **Live hosted site (GitHub Pages):** https://ikushwaha.github.io/pdf2excel-converter-and-merger/
+> - **Local web app:** http://127.0.0.1:8000 (after starting the server below)
 
 ### Run the web app
 
@@ -231,6 +232,8 @@ The landing page's **Download for Windows** button already points at
 ---
 
 ## Web landing page (download site)
+
+**Live at:** https://ikushwaha.github.io/pdf2excel-converter-and-merger/
 
 `web/` is a fully **static** site — no backend, no build step — that can be
 hosted on GitHub Pages, Netlify, or any static host as-is.
