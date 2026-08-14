@@ -7,7 +7,8 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
-from . import converter, extractor, merger, theme, utils
+from ..core import converter, extractor, merger, utils
+from . import theme
 
 # File states
 PENDING = "pending"

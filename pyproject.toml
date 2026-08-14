@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pdf2excel"
+version = "1.0.0"
+description = "PDF → Excel Converter & Merger — desktop app and web app with zero data loss"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "iKushwaha" }]
+keywords = ["pdf", "excel", "xlsx", "converter", "merge", "extract"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Office/Business",
+]
+dependencies = [
+    "pymupdf>=1.24",
+    "openpyxl>=3.1",
+    "Pillow>=10.0",
+    "flask>=3.0",
+]
+
+[project.optional-dependencies]
+dnd = ["tkinterdnd2>=0.4.2; platform_system != 'Linux'"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+pdf2excel-desktop = "pdf2xlsx.desktop.main:main"
+pdf2excel-web = "pdf2xlsx.web.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"pdf2xlsx.web" = ["templates/*.html", "static/index.html", "static/css/*.css", "static/js/*.js"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

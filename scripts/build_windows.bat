@@ -26,6 +26,7 @@ if errorlevel 1 goto :error
 echo [2/3] Building the executable...
 python -m PyInstaller --noconfirm --clean --onefile --windowed ^
   --name "PDF2Excel" ^
+  --paths src ^
   --icon web\assets\app.ico ^
   main.py
 if errorlevel 1 goto :error

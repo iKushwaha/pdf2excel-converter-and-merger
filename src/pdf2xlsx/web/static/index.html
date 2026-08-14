@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF → Excel Converter &amp; Merger — Web App</title>
+  <meta name="description" content="Convert PDFs to Excel in your browser. Tables, text and images preserved with zero data loss; merge results and extract the columns you need. Server-side processing.">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <span class="brand">PDF&thinsp;→&thinsp;Excel&nbsp;&nbsp;Converter &amp; Merger</span>
+      <nav class="nav">
+        <a href="#convert">Convert</a>
+        <a href="#outputs">Results</a>
+        <a href="#merge">Merge</a>
+        <a href="#extract">Extract</a>
+        <button id="reset-btn" class="nav-reset" title="Delete all uploaded and generated files">Reset session</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Convert -->
+    <section id="convert" class="panel">
+      <div class="container">
+        <h1>Convert PDFs to Excel</h1>
+        <p class="tagline">Drop your PDFs below. Each file becomes its own Excel workbook — tables, free text, leading zeros and images all preserved.</p>
+
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload PDF files">
+          <svg class="dz-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 15v4H5v-4H3v6h18v-6h-2zM12 3l-6 6h4v6h4V9h4l-6-6z" fill="currentColor"/></svg>
+          <p class="dz-title">Drag &amp; drop PDFs here</p>
+          <p class="dz-sub">or <span class="link">click to browse</span> — multiple files welcome</p>
+          <input type="file" id="file-input" accept=".pdf,application/pdf" multiple hidden>
+        </div>
+
+        <div class="row-options">
+          <label class="opt" for="password">
+            <span>PDF password</span>
+            <input type="password" id="password" placeholder="Only if the files are encrypted" autocomplete="off">
+          </label>
+        </div>
+
+        <div class="row-actions">
+          <button id="convert-btn" class="btn btn-primary" disabled>Convert</button>
+          <button id="clear-files" class="btn btn-ghost" disabled>Clear files</button>
+          <span id="upload-progress" class="progress-text" hidden></span>
+        </div>
+
+        <div id="queue" class="queue" hidden></div>
+        <div id="convert-status" class="status" hidden></div>
+      </div>
+    </section>
+
+    <!-- Results / Outputs -->
+    <section id="outputs" class="panel">
+      <div class="container">
+        <h2>Results</h2>
+        <p class="tagline">Every generated workbook, ready to download.</p>
+        <div id="outputs-list" class="outputs">
+          <p class="empty" id="outputs-empty">Nothing here yet — convert a PDF above.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Merge -->
+    <section id="merge" class="panel">
+      <div class="container">
+        <h2>Merge into one workbook</h2>
+        <p class="tagline">Combine converted workbooks into a single .xlsx.</p>
+        <div class="row-options">
+          <label class="opt" for="merge-files">
+            <span>Files to merge</span>
+            <select id="merge-files" multiple></select>
+            <small>Hold ⌘/Ctrl to select several. Leave empty for all.</small>
+          </label>
+          <label class="opt" for="merge-mode">
+            <span>Merge mode</span>
+            <select id="merge-mode">
+              <option value="sheets">Separate sheets (one per file)</option>
+              <option value="append">Append matching tables</option>
+            </select>
+          </label>
+        </div>
+        <div class="row-actions">
+          <button id="merge-btn" class="btn btn-primary" disabled>Merge</button>
+          <span id="merge-status" class="status-inline" hidden></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Extract -->
+    <section id="extract" class="panel">
+      <div class="container">
+        <h2>Extract the columns you need</h2>
+        <p class="tagline">Pull standard columns out of the converted workbooks into one consolidated sheet.</p>
+        <div id="field-checks" class="checks"></div>
+        <div class="row-actions">
+          <button id="extract-btn" class="btn btn-primary" disabled>Extract</button>
+          <span id="extract-status" class="status-inline" hidden></span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>PDF → Excel Converter &amp; Merger · Web app v1.0.0</span>
+      <span class="privacy-note">Your PDFs are processed on <strong>this server</strong>, not in your browser. This is a self-hosted web alternative to the fully local desktop app.</span>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

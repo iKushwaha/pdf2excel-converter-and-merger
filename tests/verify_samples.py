@@ -12,10 +12,11 @@ import sys
 import zipfile
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from openpyxl import load_workbook  # noqa: E402
 
-from pdf2xlsx import converter, extractor, merger  # noqa: E402
+from pdf2xlsx.core import converter, extractor, merger  # noqa: E402
 
 HERE = os.path.dirname(__file__)
 SAMPLES = os.path.join(HERE, "samples")

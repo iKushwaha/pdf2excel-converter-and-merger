@@ -6,7 +6,15 @@ single `.xlsx` and **save** everything to your local machine.
 
 Built with Python + Tkinter, [PyMuPDF](https://pymupdf.readthedocs.io/)
 (PDF parsing) and [openpyxl](https://openpyxl.readthedocs.io/) (Excel
-writing). No web service is involved — everything runs locally.
+writing).
+
+Two ways to use it:
+
+- **Desktop app** (100% local) — a native Tkinter app; everything runs on
+  your machine, no network calls.
+- **Web app** (self-hosted) — the same conversion engine behind a small
+  Flask server; PDFs are processed **on the server that runs it**, and the
+  results are downloaded back through the browser.
 
 ---
 
@@ -86,7 +94,7 @@ them into one spreadsheet:
 
 ---
 
-## Install & run
+## Install & run — desktop app
 
 Requires **Python 3.10+**.
 
@@ -100,6 +108,71 @@ python main.py
 > On Linux you may also need the system Tk package, e.g.
 > `sudo apt install python3-tk`. Drag & drop (`tkinterdnd2`) is optional —
 > the app runs without it, you just use **Select PDFs…**.
+
+---
+
+## Web app (server-side, browser-based)
+
+An alternative to the desktop app for users who want to convert in the
+browser. It reuses the exact same conversion engine, so output is identical.
+**Important:** files are processed on the machine running the server, not in
+the client's browser.
+
+### Run the web app
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m pdf2xlsx.web.server          # or, after `pip install -e .`:
+pdf2excel-web
+```
+
+Then open http://127.0.0.1:8000
+
+Environment variables (all optional):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `PDF2EXCEL_HOST` | `127.0.0.1` | bind address |
+| `PDF2EXCEL_PORT` | `8000` | listen port |
+| `PDF2EXCEL_DATA_DIR` | system temp `pdf2excel-web/` | where per-session uploads/outputs live |
+| `PDF2EXCEL_MAX_UPLOAD` | `104857600` (100 MB) | per-upload size cap (bytes) |
+| `PDF2EXCEL_SESSION_TTL` | `86400` | session lifetime in seconds |
+| `PDF2EXCEL_SECRET_KEY` | dev key | Flask session signing key |
+
+### What the web UI does
+
+- Drag & drop or browse for multiple PDFs (upload progress shown).
+- Optional password field for encrypted PDFs.
+- Converts each PDF to its own `.xlsx` with zero data loss (same engine).
+- Lists every generated workbook with a **Download** link.
+- **Merge** converts into one workbook — separate sheets or auto-append.
+- **Extract** consolidates the standard columns (Material Code, Item
+  Description, EAN No., Quantity, Unit Base Cost) into one workbook.
+- **Reset session** deletes the current session's uploaded and generated
+  files (files also expire automatically after `SESSION_TTL_SECONDS`).
+
+### API reference
+
+| Method | Path | Body / Query | Returns |
+|---|---|---|---|
+| `POST` | `/api/upload` | multipart `pdfs` (+ optional `password`) | per-file `{ok, name, sheets, warnings}` + `outputs` |
+| `GET` | `/api/fields` | — | available extraction fields |
+| `GET` | `/api/outputs` | — | generated workbooks |
+| `GET` | `/api/download/<name>` | — | the `.xlsx` file |
+| `POST` | `/api/merge` | JSON `{mode, files?}` | merged workbook + `outputs` |
+| `POST` | `/api/extract` | JSON `{fields}` | extracted workbook + `outputs` |
+| `POST` | `/api/reset` | — | clears current session |
+| `GET` | `/health` | — | `{ok: true, name, version}` |
+
+### Deploy the web app
+
+Run it behind a reverse proxy for production (e.g. `nginx`/`caddy` proxying
+to `127.0.0.1:8000`), set a real `PDF2EXCEL_SECRET_KEY`, and point
+`PDF2EXCEL_DATA_DIR` at a persistent volume. A WSGI server such as gunicorn
+(`gunicorn 'pdf2xlsx.web.server:create_app()'`) or waitress works for
+serving it.
 
 ---
 
@@ -179,15 +252,23 @@ Before publishing, replace `assets/app-preview.svg` with real screenshots.
 ## Project layout
 
 ```
-main.py                 entry point
-pdf2xlsx/
-  ui.py                 Tkinter UI, threading, progress, drag & drop
-  converter.py          PDF → Excel extraction (PyMuPDF)
-  merger.py             merge workbooks + direct OOXML image extraction
-  extractor.py          consolidate selected columns (5 catalogue fields)
-  excelio.py            openpyxl helpers (styling, sheet copying)
-  utils.py              paths, dedup, platform commands
-  theme.py              dark ttk theme
+main.py                 desktop entry point
+src/pdf2xlsx/
+  core/
+    converter.py        PDF → Excel extraction (PyMuPDF)
+    merger.py           merge workbooks + direct OOXML image extraction
+    extractor.py        consolidate selected columns (5 catalogue fields)
+    excelio.py          openpyxl helpers (styling, sheet copying)
+    utils.py            paths, dedup, platform commands
+  desktop/
+    ui.py               Tkinter UI, threading, progress, drag & drop
+    theme.py            dark ttk theme
+    main.py             desktop entry (console script: pdf2excel-desktop)
+  web/
+    server.py           Flask app + routes (create_app factory)
+    config.py           env-driven configuration
+    services/           session storage + core orchestration
+    static/             index.html, css/app.css, js/app.js
 scripts/
   build_windows.bat     Windows PyInstaller build (single .exe)
   build.sh              cross-platform PyInstaller build (macOS/Linux/Windows)
@@ -199,6 +280,8 @@ web/
 tests/
   make_samples.py       generates sample PDFs (tables, text, image, encrypted)
   verify_samples.py     headless end-to-end verification
+  test_web.py           headless Flask web-app tests
+pyproject.toml          packaging (src layout) — replaces requirements.txt
 ```
 
 ---
@@ -221,12 +304,14 @@ report.xlsx
 ```bash
 .venv/bin/python tests/make_samples.py      # (re)create sample PDFs
 .venv/bin/python tests/verify_samples.py    # convert, inspect, merge, assert
+.venv/bin/python tests/test_web.py          # Flask web-app end-to-end checks
 ```
 
 The suite verifies table extraction, cross-page table continuation, free-text
 preservation, image embedding, encrypted-PDF handling, unicode file names,
-both merge modes (including image preservation across merges), and field
-extraction of the five catalogue columns.
+both merge modes (including image preservation across merges), field
+extraction of the five catalogue columns, and the web app's upload, download,
+merge, extract and session lifecycle.
 
 ---
 

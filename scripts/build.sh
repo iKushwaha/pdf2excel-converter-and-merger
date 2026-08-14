@@ -24,6 +24,7 @@ python3 -m pip install -r requirements.txt pyinstaller
 echo "[2/3] Building..."
 python3 -m PyInstaller --noconfirm --clean --onefile --windowed \
   --name "PDF2Excel" \
+  --paths src \
   main.py
 
 echo "[3/3] Build complete."

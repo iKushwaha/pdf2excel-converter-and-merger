@@ -1,28 +1,16 @@
 #!/usr/bin/env python3
-"""PDF → Excel Converter & Merger — application entry point.
+"""PDF → Excel Converter & Merger — desktop application entry point.
 
 Usage:
     python main.py
 """
 
-try:
-    from tkinterdnd2 import TkinterDnD
-except Exception:  # drag & drop support is optional
-    TkinterDnD = None
+import os
+import sys
 
-from pdf2xlsx.ui import App
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 
-
-def main():
-    if TkinterDnD is not None:
-        root = TkinterDnD.Tk()
-    else:
-        import tkinter as tk
-
-        root = tk.Tk()
-    App(root)
-    root.mainloop()
-
+from pdf2xlsx.desktop.main import main  # noqa: E402
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
