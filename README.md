@@ -118,6 +118,9 @@ browser. It reuses the exact same conversion engine, so output is identical.
 **Important:** files are processed on the machine running the server, not in
 the client's browser.
 
+> **Launch the web app →** open **http://127.0.0.1:8000** in your browser
+> (after starting the server below).
+
 ### Run the web app
 
 ```bash
@@ -128,7 +131,7 @@ python -m pdf2xlsx.web.server          # or, after `pip install -e .`:
 pdf2excel-web
 ```
 
-Then open http://127.0.0.1:8000
+Then open **[http://127.0.0.1:8000](http://127.0.0.1:8000)**.
 
 Environment variables (all optional):
 
@@ -140,6 +143,7 @@ Environment variables (all optional):
 | `PDF2EXCEL_MAX_UPLOAD` | `104857600` (100 MB) | per-upload size cap (bytes) |
 | `PDF2EXCEL_SESSION_TTL` | `86400` | session lifetime in seconds |
 | `PDF2EXCEL_SECRET_KEY` | dev key | Flask session signing key |
+| `PDF2EXCEL_LANDING_URL` | GitHub Pages site | URL used by the header's **Landing Page** link |
 
 ### What the web UI does
 
