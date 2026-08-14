@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF → Excel Converter &amp; Merger</title>
+  <meta name="description" content="Convert multiple PDFs to Excel with zero data loss, merge the results into one workbook, and extract the columns you need. 100% local, no cloud.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <span class="brand">PDF&thinsp;→&thinsp;Excel&nbsp;&nbsp;Converter &amp; Merger</span>
+      <nav class="nav">
+        <a href="#features">Features</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#requirements">Requirements</a>
+        <a href="#faq">FAQ</a>
+        <a href="#download" class="nav-download">Download for Windows</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <p class="eyebrow">Version 1.0.0</p>
+          <h1>PDF → Excel Converter &amp; Merger</h1>
+          <p class="tagline">Convert multiple PDFs into Excel workbooks with <strong>zero data loss</strong> — then merge everything into one file and pull out the columns you care about.</p>
+          <div class="cta-row">
+            <a href="#download" class="btn btn-primary">Download for Windows</a>
+            <a href="#features" class="btn btn-ghost">See what it does</a>
+          </div>
+          <p class="privacy-note">Runs entirely on your machine. No cloud, no uploads, no account.</p>
+        </div>
+        <div class="hero-preview">
+          <img src="assets/app-preview.svg" alt="Screenshot of the PDF to Excel Converter & Merger application" width="520" height="380">
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="features">
+      <div class="container">
+        <h2>Everything your PDFs need</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Multi-file conversion</h3>
+            <p>Select or drag &amp; drop as many PDFs as you like. Each one becomes its own Excel workbook with per-file progress.</p>
+          </div>
+          <div class="card">
+            <h3>Zero data loss</h3>
+            <p>Tables, free text, line breaks, leading zeros and embedded images all survive — nothing is silently dropped.</p>
+          </div>
+          <div class="card">
+            <h3>Smart tables</h3>
+            <p>Ruled tables are extracted accurately, and tables spanning multiple pages are re-joined into a single worksheet.</p>
+          </div>
+          <div class="card">
+            <h3>Merge into one workbook</h3>
+            <p>Combine every converted file into a single .xlsx — as separate sheets, or by auto-appending matching tables.</p>
+          </div>
+          <div class="card">
+            <h3>Extract the columns you need</h3>
+            <p>Grab Material Code, Item Description, EAN No., Quantity and Unit Base Cost into one consolidated spreadsheet.</p>
+          </div>
+          <div class="card">
+            <h3>Handles real-world PDFs</h3>
+            <p>Password-protected PDFs, unicode filenames, scanned pages and image-heavy documents are all supported.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screenshots -->
+    <section id="screenshots" class="screenshots">
+      <div class="container">
+        <h2>Screenshots</h2>
+        <div class="grid">
+          <figure>
+            <img src="assets/app-preview.svg" alt="Application main window with file list and conversion controls" loading="lazy">
+            <figcaption>Add PDFs, then convert with live progress.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/app-preview.svg" alt="Application merge and field extraction panel" loading="lazy">
+            <figcaption>Merge into one file or extract selected columns.</figcaption>
+          </figure>
+        </div>
+        <p class="note">Replace the images in <code>web/assets/</code> with real screenshots before publishing.</p>
+      </div>
+    </section>
+
+    <!-- Requirements -->
+    <section id="requirements" class="requirements">
+      <div class="container">
+        <h2>System requirements</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Windows (installer)</h3>
+            <ul>
+              <li>Windows 10 or 11, 64-bit</li>
+              <li>No Python required</li>
+              <li>~200 MB free disk space</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>macOS / Linux (source)</h3>
+            <ul>
+              <li>Python 3.10+</li>
+              <li>Run from source — see the README</li>
+              <li>Drag &amp; drop optional (tkinterdnd2)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ / Notes -->
+    <section id="faq" class="faq">
+      <div class="container">
+        <h2>Frequently asked</h2>
+        <details>
+          <summary>Is my data uploaded anywhere?</summary>
+          <p>No. Everything is processed locally on your machine. The app makes no network calls.</p>
+        </details>
+        <details>
+          <summary>Which formats are supported?</summary>
+          <p>PDF input, .xlsx output. Ruled tables, free text, and embedded images are all handled.</p>
+        </details>
+        <details>
+          <summary>What about scanned PDFs?</summary>
+          <p>Scanned pages are embedded as pictures with a clear notice. OCR is not bundled, so run OCR on the PDF first if you need searchable text.</p>
+        </details>
+        <details>
+          <summary>Do borderless tables convert?</summary>
+          <p>Tables without ruled lines are preserved as plain text on the Text &amp; Images sheet rather than being guessed — nothing is lost, nothing is invented.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Download -->
+    <section id="download" class="download">
+      <div class="container download-box">
+        <h2>Download for Windows</h2>
+        <p class="tagline">Grab the installer, run it, and convert your first PDF in under a minute.</p>
+        <a href="downloads/PDF2Excel-win64.exe" class="btn btn-primary btn-lg" download>Download for Windows</a>
+        <p class="note">Installer is built with PyInstaller. See the README for build instructions and a guided Setup.exe option.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>PDF → Excel Converter &amp; Merger · v1.0.0 · <span id="year"></span></span>
+      <span class="footer-links">
+        <a href="#features">Features</a> ·
+        <a href="#requirements">Requirements</a> ·
+        <a href="#faq">FAQ</a>
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

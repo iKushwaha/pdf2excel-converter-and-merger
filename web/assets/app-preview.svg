@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="380" viewBox="0 0 520 380" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <linearGradient id="titlebar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#20222b"/>
+      <stop offset="1" stop-color="#1a1c23"/>
+    </linearGradient>
+  </defs>
+
+  <!-- window chrome -->
+  <rect x="1" y="1" width="518" height="378" rx="10" fill="#16171d" stroke="#2e3342"/>
+  <rect x="1" y="1" width="518" height="34" rx="10" fill="url(#titlebar)"/>
+  <rect x="1" y="18" width="518" height="17" fill="#1a1c23"/>
+
+  <!-- traffic lights -->
+  <circle cx="22" cy="18" r="6" fill="#e05656"/>
+  <circle cx="42" cy="18" r="6" fill="#e0a64c"/>
+  <circle cx="62" cy="18" r="6" fill="#63c77a"/>
+
+  <!-- title -->
+  <text x="84" y="23" fill="#e8eaf0" font-size="12" font-weight="700">PDF → Excel Converter &amp; Merger</text>
+
+  <!-- toolbar -->
+  <g>
+    <rect x="16" y="48" width="118" height="26" rx="13" fill="#4c9aff"/>
+    <text x="75" y="66" text-anchor="middle" fill="#0d1220" font-size="11" font-weight="600">Select PDFs…</text>
+    <rect x="142" y="48" width="116" height="26" rx="13" fill="#242733" stroke="#2e3342"/>
+    <text x="200" y="66" text-anchor="middle" fill="#a7abbd" font-size="11">Output Folder…</text>
+    <rect x="266" y="48" width="110" height="26" rx="13" fill="#242733" stroke="#2e3342"/>
+    <text x="321" y="66" text-anchor="middle" fill="#a7abbd" font-size="11">Remove Selected</text>
+    <rect x="384" y="48" width="120" height="26" rx="13" fill="#242733" stroke="#2e3342"/>
+    <text x="444" y="66" text-anchor="middle" fill="#a7abbd" font-size="11">Cancel</text>
+  </g>
+
+  <!-- input table -->
+  <g>
+    <rect x="16" y="88" width="488" height="104" rx="8" fill="#1f2129"/>
+    <g fill="#4c9aff" font-size="10" font-weight="700">
+      <text x="30" y="108">PDF file</text>
+      <text x="288" y="108">Size</text>
+      <text x="334" y="108">Pages</text>
+      <text x="386" y="108">Status</text>
+      <text x="460" y="108">Progress</text>
+    </g>
+    <line x1="16" y1="114" x2="504" y2="114" stroke="#2e3342"/>
+    <g font-size="10.5">
+      <text x="30" y="134" fill="#63c77a">invoice-july.pdf</text>
+      <text x="288" y="134" fill="#a7abbd">12 KB</text>
+      <text x="334" y="134" fill="#a7abbd">3</text>
+      <text x="386" y="134" fill="#63c77a">Done</text>
+      <text x="454" y="134" text-anchor="end" fill="#a7abbd">100%</text>
+
+      <text x="30" y="154" fill="#e0a64c">catalogue-q3.pdf</text>
+      <text x="288" y="154" fill="#a7abbd">48 KB</text>
+      <text x="334" y="154" fill="#a7abbd">5</text>
+      <text x="386" y="154" fill="#e0a64c">Converting</text>
+      <rect x="424" y="148" width="56" height="7" rx="3.5" fill="#2e3342"/>
+      <rect x="424" y="148" width="30" height="7" rx="3.5" fill="#e0a64c"/>
+
+      <text x="30" y="174" fill="#e8eaf0">packing-list.pdf</text>
+      <text x="288" y="174" fill="#a7abbd">9 KB</text>
+      <text x="334" y="174" fill="#a7abbd">2</text>
+      <text x="386" y="174" fill="#a7abbd">Pending</text>
+      <text x="454" y="174" text-anchor="end" fill="#a7abbd">0%</text>
+    </g>
+  </g>
+
+  <!-- convert row -->
+  <g>
+    <rect x="16" y="200" width="132" height="26" rx="13" fill="#4c9aff"/>
+    <text x="82" y="218" text-anchor="middle" fill="#0d1220" font-size="11" font-weight="600">Convert All to Excel</text>
+    <rect x="158" y="204" width="300" height="9" rx="4.5" fill="#2e3342"/>
+    <rect x="158" y="204" width="120" height="9" rx="4.5" fill="#4c9aff"/>
+    <text x="472" y="218" text-anchor="end" fill="#a7abbd" font-size="11">2 / 3</text>
+  </g>
+
+  <!-- results table -->
+  <g>
+    <text x="16" y="252" fill="#a7abbd" font-size="11" font-weight="600">Converted Excel files</text>
+    <rect x="16" y="260" width="488" height="62" rx="8" fill="#1f2129"/>
+    <g fill="#4c9aff" font-size="10" font-weight="700">
+      <text x="30" y="278">Excel file</text>
+      <text x="380" y="278">Size</text>
+      <text x="452" y="278">Status</text>
+    </g>
+    <line x1="16" y1="284" x2="504" y2="284" stroke="#2e3342"/>
+    <g font-size="10.5">
+      <text x="30" y="302" fill="#e8eaf0">invoice-july.xlsx</text>
+      <text x="380" y="302" fill="#a7abbd">18 KB</text>
+      <text x="452" y="302" fill="#63c77a">Done</text>
+      <text x="30" y="318" fill="#e8eaf0">catalogue-q3.xlsx</text>
+      <text x="380" y="318" fill="#a7abbd">64 KB</text>
+      <text x="452" y="318" fill="#4c9aff">Merged</text>
+    </g>
+  </g>
+
+  <!-- merge + extract panel -->
+  <g>
+    <rect x="16" y="332" width="488" height="36" rx="8" fill="#242733"/>
+    <circle cx="30" cy="344" r="5" fill="none" stroke="#4c9aff" stroke-width="1.5"/>
+    <text x="42" y="348" fill="#a7abbd" font-size="10">Merge as separate sheets</text>
+    <circle cx="206" cy="344" r="5" fill="none" stroke="#2e3342" stroke-width="1.5"/>
+    <text x="218" y="348" fill="#a7abbd" font-size="10">Auto-append</text>
+    <rect x="300" y="334" width="204" height="32" rx="6" fill="#4c9aff"/>
+    <text x="402" y="354" text-anchor="middle" fill="#0d1220" font-size="10.5" font-weight="600">Merge Into One Excel File</text>
+  </g>
+</svg>

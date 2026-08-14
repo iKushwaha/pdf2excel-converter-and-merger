@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Build artifacts (PyInstaller)
+build/
+dist/
+*.spec
+
+# Generated test output
+tests/output/
+
+# macOS
+.DS_Store
+._*
+
+# Logs
+*.log
