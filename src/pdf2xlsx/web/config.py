@@ -33,5 +33,11 @@ class Config:
 
     SECRET_KEY = os.environ.get("PDF2EXCEL_SECRET_KEY", "dev-only-secret-key")
 
+    # Link back to the desktop-app landing site shown in the web app header.
+    # Point this at your hosted page (or a local file:// path in development).
+    LANDING_URL = os.environ.get(
+        "PDF2EXCEL_LANDING_URL",
+        "https://ikushwaha.github.io/pdf2excel-converter-and-merger/")
+
     # Accepted upload extensions (case-insensitive).
     ALLOWED_EXTENSIONS = {".pdf"}

@@ -8,7 +8,7 @@ kept in per-session temp directories and auto-expired.
 
 import os
 
-from flask import (Flask, jsonify, request, send_file, send_from_directory,
+from flask import (Flask, jsonify, render_template, request, send_file,
                    session as flask_session)
 
 from . import config
@@ -44,7 +44,8 @@ def create_app(data_dir=None):
     # -------------------------------------------------------------- pages
     @app.route("/")
     def index():
-        return send_from_directory(app.static_folder, "index.html")
+        return render_template("index.html",
+                               landing_url=app.config.get("LANDING_URL", ""))
 
     @app.route("/health")
     def health():

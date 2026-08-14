@@ -71,6 +71,16 @@ a:hover { color: var(--accent-hover); }
 }
 .nav-reset:hover { color: var(--danger); border-color: var(--danger); }
 
+.nav-landing {
+  color: var(--text) !important;
+  background: var(--success);
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.nav-landing:hover { filter: brightness(1.1); }
+
 /* --------------------------------------------------------------- panels */
 .panel { padding: 40px 0 8px; }
 
