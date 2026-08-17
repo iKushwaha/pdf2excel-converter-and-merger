@@ -120,7 +120,7 @@ the client's browser.
 
 > **Launch the app →**
 > - **Live hosted site (GitHub Pages):** https://ikushwaha.github.io/pdf2excel-converter-and-merger/
-> - **Local web app:** http://127.0.0.1:8000 (after starting the server below)
+> - **Web app:** https://ikushwaha.github.io/pdf2excel-converter-and-merger/
 
 ### Run the web app
 
@@ -132,7 +132,7 @@ python -m pdf2xlsx.web.server          # or, after `pip install -e .`:
 pdf2excel-web
 ```
 
-Then open **[http://127.0.0.1:8000](http://127.0.0.1:8000)**.
+Then open **[https://ikushwaha.github.io/pdf2excel-converter-and-merger/](https://ikushwaha.github.io/pdf2excel-converter-and-merger/)**.
 
 Environment variables (all optional):
 
