@@ -174,7 +174,7 @@ Environment variables (all optional):
 ### Deploy the web app
 
 Run it behind a reverse proxy for production (e.g. `nginx`/`caddy` proxying
-to `127.0.0.1:8000`), set a real `PDF2EXCEL_SECRET_KEY`, and point
+to `https://github.com/iKushwaha/pdf2excel-converter-and-merger/blob/main/web/index.html`), set a real `PDF2EXCEL_SECRET_KEY`, and point
 `PDF2EXCEL_DATA_DIR` at a persistent volume. A WSGI server such as gunicorn
 (`gunicorn 'pdf2xlsx.web.server:create_app()'`) or waitress works for
 serving it.
