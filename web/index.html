@@ -3,41 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF → Excel Converter &amp; Merger</title>
-  <meta name="description" content="Convert multiple PDFs to Excel with zero data loss, merge the results into one workbook, and extract the columns you need. 100% local, no cloud.">
-  <link rel="stylesheet" href="style.css">
+  <title>PDF → Excel Converter &amp; Merger — Web App</title>
+  <meta name="description" content="Convert PDFs to Excel with zero data loss. Tables, text and images preserved; merge results and extract the columns you need.">
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
+
   <header class="site-header">
     <div class="container header-inner">
       <span class="brand">PDF&thinsp;→&thinsp;Excel&nbsp;&nbsp;Converter &amp; Merger</span>
       <nav class="nav">
+        <a href="#convert">Convert</a>
         <a href="#features">Features</a>
-        <a href="#screenshots">Screenshots</a>
-        <a href="#requirements">Requirements</a>
+        <a href="#download">Download</a>
         <a href="#faq">FAQ</a>
-        <a href="https://ikushwaha.github.io/pdf2excel-converter-and-merger/" class="nav-web" title="Open the web app on GitHub Pages">Web App</a>
-        <a href="#download" class="nav-download">Download for Windows</a>
+        <button id="reset-btn" class="nav-reset" title="Delete all uploaded and generated files">Reset session</button>
+        <a href="downloads/PDF2Excel-win64.exe" class="nav-download" download>Download for Windows</a>
       </nav>
     </div>
   </header>
 
   <main>
+
     <!-- Hero -->
     <section class="hero">
-      <div class="container hero-inner">
-        <div class="hero-text">
-          <p class="eyebrow">Version 1.0.0</p>
-          <h1>PDF → Excel Converter &amp; Merger</h1>
-          <p class="tagline">Convert multiple PDFs into Excel workbooks with <strong>zero data loss</strong> — then merge everything into one file and pull out the columns you care about.</p>
-          <div class="cta-row">
-            <a href="#download" class="btn btn-primary">Download for Windows</a>
-            <a href="#features" class="btn btn-ghost">See what it does</a>
-          </div>
-          <p class="privacy-note">Runs entirely on your machine. No cloud, no uploads, no account.</p>
+      <div class="container">
+        <p style="color:var(--accent);font-size:0.85rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;">Version 1.0.0</p>
+        <h1>PDF → Excel Converter &amp; Merger</h1>
+        <p class="tagline">Convert multiple PDFs into Excel workbooks with <strong>zero data loss</strong> — then merge everything into one file and pull out the columns you care about.</p>
+        <div class="cta-row">
+          <a href="#convert" class="btn btn-primary btn-lg">Start Converting</a>
+          <a href="#download" class="btn btn-ghost btn-lg">Download Desktop App</a>
         </div>
-        <div class="hero-preview">
-          <img src="assets/app-preview.svg" alt="Screenshot of the PDF to Excel Converter & Merger application" width="520" height="380">
+        <p class="privacy-note">Runs on your own server. No cloud, no third-party uploads.</p>
+
+        <!-- Server Config -->
+        <div class="server-config">
+          <div id="server-dot" class="status-dot" title="No server URL configured"></div>
+          <label for="server-url">Server URL:</label>
+          <input type="url" id="server-url" placeholder="http://your-server:8000" autocomplete="off">
+          <button id="server-check" class="btn-sm">Connect</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Convert -->
+    <section id="convert" class="panel">
+      <div class="container">
+        <h2>Convert PDFs to Excel</h2>
+        <p class="tagline">Drop your PDFs below. Each file becomes its own Excel workbook — tables, free text, leading zeros and images all preserved.</p>
+
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload PDF files">
+          <svg class="dz-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 15v4H5v-4H3v6h18v-6h-2zM12 3l-6 6h4v6h4V9h4l-6-6z" fill="currentColor"/></svg>
+          <p class="dz-title">Drag &amp; drop PDFs here</p>
+          <p class="dz-sub">or <span class="link">click to browse</span> — multiple files welcome</p>
+          <input type="file" id="file-input" accept=".pdf,application/pdf" multiple hidden>
+        </div>
+
+        <div class="row-options">
+          <label class="opt" for="password">
+            <span>PDF password</span>
+            <input type="password" id="password" placeholder="Only if the files are encrypted" autocomplete="off">
+          </label>
+        </div>
+
+        <div class="row-actions">
+          <button id="convert-btn" class="btn btn-primary" disabled>Convert</button>
+          <button id="clear-files" class="btn btn-ghost" disabled>Clear files</button>
+          <span id="upload-progress" class="progress-text" hidden></span>
+        </div>
+
+        <div id="queue" class="queue" hidden></div>
+        <div id="convert-status" class="status" hidden></div>
+      </div>
+    </section>
+
+    <!-- Results / Outputs -->
+    <section id="outputs" class="panel">
+      <div class="container">
+        <h2>Results</h2>
+        <p class="tagline">Every generated workbook, ready to download.</p>
+        <div id="outputs-list" class="outputs">
+          <p class="empty" id="outputs-empty">Nothing here yet — convert a PDF above.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Merge -->
+    <section id="merge" class="panel">
+      <div class="container">
+        <h2>Merge into one workbook</h2>
+        <p class="tagline">Combine converted workbooks into a single .xlsx.</p>
+        <div class="row-options">
+          <label class="opt" for="merge-files">
+            <span>Files to merge</span>
+            <select id="merge-files" multiple></select>
+            <small>Hold ⌘/Ctrl to select several. Leave empty for all.</small>
+          </label>
+          <label class="opt" for="merge-mode">
+            <span>Merge mode</span>
+            <select id="merge-mode">
+              <option value="sheets">Separate sheets (one per file)</option>
+              <option value="append">Append matching tables</option>
+            </select>
+          </label>
+        </div>
+        <div class="row-actions">
+          <button id="merge-btn" class="btn btn-primary" disabled>Merge</button>
+          <span id="merge-status" class="status-inline" hidden></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Extract -->
+    <section id="extract" class="panel">
+      <div class="container">
+        <h2>Extract the columns you need</h2>
+        <p class="tagline">Pull standard columns out of the converted workbooks into one consolidated sheet.</p>
+        <div id="field-checks" class="checks"></div>
+        <div class="row-actions">
+          <button id="extract-btn" class="btn btn-primary" disabled>Extract</button>
+          <span id="extract-status" class="status-inline" hidden></span>
         </div>
       </div>
     </section>
@@ -49,7 +135,7 @@
         <div class="grid">
           <div class="card">
             <h3>Multi-file conversion</h3>
-            <p>Select or drag &amp; drop as many PDFs as you like. Each one becomes its own Excel workbook with per-file progress.</p>
+            <p>Select or drag &amp; drop as many PDFs as you like. Each one becomes its own Excel workbook with live progress.</p>
           </div>
           <div class="card">
             <h3>Zero data loss</h3>
@@ -75,81 +161,39 @@
       </div>
     </section>
 
-    <!-- Screenshots -->
-    <section id="screenshots" class="screenshots">
-      <div class="container">
-        <h2>Screenshots</h2>
-        <div class="grid">
-          <figure>
-            <img src="assets/app-preview.svg" alt="Application main window with file list and conversion controls" loading="lazy">
-            <figcaption>Add PDFs, then convert with live progress.</figcaption>
-          </figure>
-          <figure>
-            <img src="assets/app-preview.svg" alt="Application merge and field extraction panel" loading="lazy">
-            <figcaption>Merge into one file or extract selected columns.</figcaption>
-          </figure>
-        </div>
-        <p class="note">Replace the images in <code>web/assets/</code> with real screenshots before publishing.</p>
-      </div>
-    </section>
-
-    <!-- Requirements -->
-    <section id="requirements" class="requirements">
-      <div class="container">
-        <h2>System requirements</h2>
-        <div class="grid">
-          <div class="card">
-            <h3>Windows (installer)</h3>
-            <ul>
-              <li>Windows 10 or 11, 64-bit</li>
-              <li>No Python required</li>
-              <li>~200 MB free disk space</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>macOS / Linux (source)</h3>
-            <ul>
-              <li>Python 3.10+</li>
-              <li>Run from source — see the README</li>
-              <li>Drag &amp; drop optional (tkinterdnd2)</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ / Notes -->
-    <section id="faq" class="faq">
-      <div class="container">
-        <h2>Frequently asked</h2>
-        <details>
-          <summary>Is my data uploaded anywhere?</summary>
-          <p>No. Everything is processed locally on your machine. The app makes no network calls.</p>
-        </details>
-        <details>
-          <summary>Which formats are supported?</summary>
-          <p>PDF input, .xlsx output. Ruled tables, free text, and embedded images are all handled.</p>
-        </details>
-        <details>
-          <summary>What about scanned PDFs?</summary>
-          <p>Scanned pages are embedded as pictures with a clear notice. OCR is not bundled, so run OCR on the PDF first if you need searchable text.</p>
-        </details>
-        <details>
-          <summary>Do borderless tables convert?</summary>
-          <p>Tables without ruled lines are preserved as plain text on the Text &amp; Images sheet rather than being guessed — nothing is lost, nothing is invented.</p>
-        </details>
-      </div>
-    </section>
-
     <!-- Download -->
     <section id="download" class="download">
       <div class="container download-box">
         <h2>Download for Windows</h2>
-        <p class="tagline">Grab the installer, run it, and convert your first PDF in under a minute.</p>
+        <p class="tagline" style="color:var(--text-dim);">Grab the installer, run it, and convert your first PDF in under a minute. No server needed.</p>
         <a href="downloads/PDF2Excel-win64.exe" class="btn btn-primary btn-lg" download>Download for Windows</a>
-        <p class="note">Installer is built with PyInstaller. See the README for build instructions and a guided Setup.exe option.</p>
+        <p style="color:var(--text-dim);font-size:0.85rem;margin-top:12px;">Also available on macOS / Linux — run from source with Python 3.10+. See the <a href="https://github.com/iKushwaha/pdf2excel-converter-and-merger">README</a>.</p>
       </div>
     </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="features">
+      <div class="container" style="max-width:760px;">
+        <h2 style="text-align:center;margin-bottom:26px;">Frequently asked</h2>
+        <details style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;padding:16px 18px;">
+          <summary style="cursor:pointer;font-weight:600;">Is my data uploaded anywhere?</summary>
+          <p style="color:var(--text-dim);margin-top:10px;font-size:0.95rem;">PDFs are uploaded to the server URL you configure above. That server runs on your own machine or infrastructure — nothing goes to a third party.</p>
+        </details>
+        <details style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;padding:16px 18px;">
+          <summary style="cursor:pointer;font-weight:600;">How do I run the server?</summary>
+          <p style="color:var(--text-dim);margin-top:10px;font-size:0.95rem;">Clone the repo, install dependencies, and run <code style="background:var(--bg-panel-2);padding:2px 6px;border-radius:4px;">python -m pdf2xlsx.web.server</code>. The server starts on port 8000 by default.</p>
+        </details>
+        <details style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;padding:16px 18px;">
+          <summary style="cursor:pointer;font-weight:600;">Which formats are supported?</summary>
+          <p style="color:var(--text-dim);margin-top:10px;font-size:0.95rem;">PDF input, .xlsx output. Ruled tables, free text, and embedded images are all handled.</p>
+        </details>
+        <details style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;padding:16px 18px;">
+          <summary style="cursor:pointer;font-weight:600;">What about scanned PDFs?</summary>
+          <p style="color:var(--text-dim);margin-top:10px;font-size:0.95rem;">Scanned pages are embedded as pictures with a clear notice. OCR is not bundled, so run OCR on the PDF first if you need searchable text.</p>
+        </details>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">
@@ -157,14 +201,15 @@
       <span>PDF → Excel Converter &amp; Merger · v1.0.0 · <span id="year"></span></span>
       <span class="footer-links">
         <a href="#features">Features</a> ·
-        <a href="#requirements">Requirements</a> ·
-        <a href="#faq">FAQ</a>
+        <a href="#download">Download</a> ·
+        <a href="#faq">FAQ</a> ·
+        <a href="https://github.com/iKushwaha/pdf2excel-converter-and-merger">GitHub</a>
       </span>
     </div>
   </footer>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  <div id="toast" class="toast" hidden></div>
+  <script src="app.js"></script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 </body>
 </html>
