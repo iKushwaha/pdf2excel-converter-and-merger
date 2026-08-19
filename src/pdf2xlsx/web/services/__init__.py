@@ -19,6 +19,9 @@ def _unique_output(out_dir, base_stem):
 
 def convert_upload(session: SessionManager, sid: str, upload, password=None):
     """Convert a single uploaded PDF. Returns a JSON-safe status dict."""
+    import logging
+    _log = logging.getLogger(__name__)
+
     try:
         result = converter.convert_pdf_to_excel(
             upload["path"], session.output_dir(sid),
@@ -33,10 +36,13 @@ def convert_upload(session: SessionManager, sid: str, upload, password=None):
         return {"ok": False, "error": "encrypted", "message": "Password required."}
     except converter.ConversionCancelled:
         return {"ok": False, "error": "cancelled", "message": "Cancelled."}
-    except converter.ConversionError as exc:
-        return {"ok": False, "error": "conversion", "message": str(exc)}
-    except Exception as exc:  # defensive: never 500 on a bad file
-        return {"ok": False, "error": "unexpected", "message": str(exc)}
+    except converter.ConversionError:
+        return {"ok": False, "error": "conversion",
+                "message": "Conversion failed. The file may be corrupted or unsupported."}
+    except Exception:
+        _log.exception("Unexpected error converting %s", upload.get("name", "?"))
+        return {"ok": False, "error": "unexpected",
+                "message": "An unexpected error occurred during conversion."}
 
 
 def merge_outputs(session: SessionManager, sid: str, filenames=None, mode="sheets"):

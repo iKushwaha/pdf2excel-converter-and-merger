@@ -1,6 +1,7 @@
 """Web app configuration (read from environment with sane defaults)."""
 
 import os
+import secrets
 import tempfile
 
 
@@ -31,7 +32,15 @@ class Config:
     # How often the background cleanup sweep runs (seconds).
     CLEANUP_INTERVAL_SECONDS = _as_int("PDF2EXCEL_CLEANUP_INTERVAL", 60 * 30)
 
-    SECRET_KEY = os.environ.get("PDF2EXCEL_SECRET_KEY", "dev-only-secret-key")
+    # Secret key: use env var if set, otherwise generate a random one per process.
+    # A hardcoded default is a security risk — anyone reading the source can forge sessions.
+    SECRET_KEY = os.environ.get("PDF2EXCEL_SECRET_KEY") or secrets.token_hex(32)
+
+    # Session cookie hardening.
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    # Uncomment the line below when running behind HTTPS:
+    # SESSION_COOKIE_SECURE = True
 
     # Link back to the desktop-app landing site shown in the web app header.
     # Point this at your hosted page (or a local file:// path in development).

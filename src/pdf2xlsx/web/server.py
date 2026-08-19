@@ -58,6 +58,9 @@ def create_app(data_dir=None):
     # ------------------------------------------------------------ uploads
     @app.post("/api/upload")
     def api_upload():
+        import logging
+        _log = logging.getLogger(__name__)
+
         sid = _current_session()
         files = request.files.getlist("pdfs")
         files = [f for f in files if f and f.filename]
@@ -66,13 +69,31 @@ def create_app(data_dir=None):
         if len(files) > MAX_UPLOAD:
             return jsonify({"ok": False, "error": f"Too many files (max {MAX_UPLOAD})."}), 400
 
+        # Server-side file type validation — only accept .pdf files.
+        allowed = app.config.get("ALLOWED_EXTENSIONS", {".pdf"})
+        rejected = []
+        valid_files = []
+        for f in files:
+            ext = os.path.splitext(f.filename or "")[1].lower()
+            if ext in allowed:
+                valid_files.append(f)
+            else:
+                rejected.append(f.filename or "unknown")
+        if rejected:
+            _log.warning("Rejected non-PDF uploads: %s", rejected)
+        if not valid_files:
+            return jsonify({"ok": False,
+                            "error": "No valid PDF files in the upload."}), 400
+
         uploaded = []
-        for index, stream in enumerate(files):
+        for index, stream in enumerate(valid_files):
             try:
                 path, name = sessions.save_upload(sid, index, stream)
                 uploaded.append({"path": path, "name": name})
-            except Exception as exc:
-                return jsonify({"ok": False, "error": f"Upload failed: {exc}"}), 400
+            except Exception:
+                _log.exception("Upload failed for file %s", getattr(stream, "filename", "?"))
+                return jsonify({"ok": False,
+                                "error": "Upload failed. Check file size and try again."}), 400
 
         results = []
         for upload in uploaded:
@@ -91,7 +112,16 @@ def create_app(data_dir=None):
         sid = _current_session()
         if "/" in name or "\\" in name or not name.endswith(".xlsx"):
             return jsonify({"ok": False, "error": "Invalid file name."}), 400
-        path = os.path.join(sessions.output_dir(sid), name)
+        # Block path traversal via ".." sequences and null bytes.
+        if ".." in name or "\x00" in name:
+            return jsonify({"ok": False, "error": "Invalid file name."}), 400
+        out_dir = sessions.output_dir(sid)
+        path = os.path.join(out_dir, name)
+        # Verify the resolved path is still inside the output directory.
+        real_path = os.path.realpath(path)
+        real_out = os.path.realpath(out_dir)
+        if not real_path.startswith(real_out + os.sep):
+            return jsonify({"ok": False, "error": "Invalid file name."}), 400
         if not os.path.isfile(path):
             return jsonify({"ok": False, "error": "File not found."}), 404
         return send_file(path, as_attachment=True, download_name=name)
@@ -99,6 +129,9 @@ def create_app(data_dir=None):
     # -------------------------------------------------------------- merge
     @app.post("/api/merge")
     def api_merge():
+        import logging
+        _log = logging.getLogger(__name__)
+
         sid = _current_session()
         body = request.get_json(silent=True) or {}
         filenames = [n for n in body.get("files", []) if isinstance(n, str)]
@@ -109,12 +142,19 @@ def create_app(data_dir=None):
             result = merge_outputs(sessions, sid, filenames, mode=mode)
         except ValueError as exc:
             return jsonify({"ok": False, "error": str(exc)}), 400
+        except Exception:
+            _log.exception("Merge failed for session %s", sid)
+            return jsonify({"ok": False,
+                            "error": "Merge failed. Please try again."}), 500
         return jsonify({"ok": True, "result": result,
                         "outputs": list_outputs(sessions, sid)})
 
     # ---------------------------------------------------------- extraction
     @app.post("/api/extract")
     def api_extract():
+        import logging
+        _log = logging.getLogger(__name__)
+
         sid = _current_session()
         body = request.get_json(silent=True) or {}
         fields = [f for f in body.get("fields", []) if isinstance(f, str)]
@@ -124,6 +164,10 @@ def create_app(data_dir=None):
             result = extract_fields(sessions, sid, fields, filenames=filenames or None)
         except ValueError as exc:
             return jsonify({"ok": False, "error": str(exc)}), 400
+        except Exception:
+            _log.exception("Extraction failed for session %s", sid)
+            return jsonify({"ok": False,
+                            "error": "Extraction failed. Please try again."}), 500
         return jsonify({"ok": True, "result": result,
                         "outputs": list_outputs(sessions, sid)})
 
