@@ -23,14 +23,21 @@ class Config:
     # Hard cap on a single upload (bytes). Default 100 MB.
     MAX_CONTENT_LENGTH = _as_int("PDF2EXCEL_MAX_UPLOAD", 100 * 1024 * 1024)
 
+    # Per-file size cap (bytes). Default 50 MB — prevents one huge file from
+    # consuming the entire upload budget.
+    MAX_PER_FILE_LENGTH = _as_int("PDF2EXCEL_MAX_PER_FILE", 50 * 1024 * 1024)
+
     # Max number of files in one upload request.
     MAX_FILES_PER_UPLOAD = _as_int("PDF2EXCEL_MAX_FILES", 50)
+
+    # Maximum concurrent sessions before the oldest are pruned.
+    MAX_SESSIONS = _as_int("PDF2EXCEL_MAX_SESSIONS", 200)
 
     # Session lifetime (seconds) before the cleanup sweep removes it.
     SESSION_TTL_SECONDS = _as_int("PDF2EXCEL_SESSION_TTL", 60 * 60 * 24)
 
     # How often the background cleanup sweep runs (seconds).
-    CLEANUP_INTERVAL_SECONDS = _as_int("PDF2EXCEL_CLEANUP_INTERVAL", 60 * 30)
+    CLEANUP_INTERVAL_SECONDS = _as_int("PDF2EXCEL_CLEANUP_INTERVAL", 60 * 15)
 
     # Secret key: use env var if set, otherwise generate a random one per process.
     # A hardcoded default is a security risk — anyone reading the source can forge sessions.
@@ -39,8 +46,12 @@ class Config:
     # Session cookie hardening.
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
-    # Uncomment the line below when running behind HTTPS:
-    # SESSION_COOKIE_SECURE = True
+    # Set to True when running behind HTTPS (e.g. production with TLS termination).
+    SESSION_COOKIE_SECURE = os.environ.get(
+        "PDF2EXCEL_COOKIE_SECURE", "").lower() in ("1", "true", "yes")
+
+    # Rate limiting — requests per minute per IP for state-changing endpoints.
+    RATE_LIMIT_PER_MINUTE = _as_int("PDF2EXCEL_RATE_LIMIT", 30)
 
     # Link back to the desktop-app landing site shown in the web app header.
     # Point this at your hosted page (or a local file:// path in development).
@@ -50,3 +61,6 @@ class Config:
 
     # Accepted upload extensions (case-insensitive).
     ALLOWED_EXTENSIONS = {".pdf"}
+
+    # Magic bytes that every valid PDF must start with.
+    PDF_MAGIC = b"%PDF"

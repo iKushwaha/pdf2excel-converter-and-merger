@@ -674,9 +674,11 @@ class App:
 
         def ok():
             result["pw"] = entry.get()
+            entry.delete(0, tk.END)  # clear password from widget memory
             dlg.destroy()
 
         def cancel():
+            entry.delete(0, tk.END)  # clear password from widget memory
             dlg.destroy()
 
         btns = ttk.Frame(frame)

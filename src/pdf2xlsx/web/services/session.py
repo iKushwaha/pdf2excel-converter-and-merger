@@ -20,11 +20,13 @@ import uuid
 from .. import config
 
 _UNSAFE = re.compile(r'[^A-Za-z0-9._-]+')
+_ZERO_BYTE = re.compile(r'\x00')
 
 
 def _sanitize(name):
-    """Keep a readable filename while removing path separators and junk."""
+    """Keep a readable filename while removing path separators, null bytes, and junk."""
     base = os.path.basename(name or "file.pdf")
+    base = _ZERO_BYTE.sub("", base)  # strip null bytes first
     stem, ext = os.path.splitext(base)
     safe = _UNSAFE.sub("_", stem).strip("._") or "file"
     if len(safe) > 80:
@@ -32,21 +34,46 @@ def _sanitize(name):
     return f"{safe}{ext.lower()}"
 
 
-def _cleanup_old_sessions(data_dir, ttl):
-    """Remove session dirs whose mtime is older than ``ttl`` seconds."""
+def _cleanup_old_sessions(data_dir, ttl, max_sessions=None):
+    """Remove session dirs whose mtime is older than ``ttl`` seconds.
+
+    When *max_sessions* is set, the oldest sessions are also pruned once the
+    count exceeds the limit — even if they haven't expired yet.
+    """
     try:
+        dirs = []
         for name in os.listdir(data_dir):
             if name.startswith("._"):
                 continue
             path = os.path.join(data_dir, name)
             if not os.path.isdir(path):
                 continue
+            dirs.append(path)
+
+        removed = 0
+        # First pass: remove expired sessions.
+        now = time.time()
+        for path in dirs[:]:
             try:
-                age = time.time() - os.path.getmtime(path)
+                age = now - os.path.getmtime(path)
                 if age > ttl:
                     shutil.rmtree(path, ignore_errors=True)
+                    dirs.remove(path)
+                    removed += 1
             except OSError:
                 continue
+
+        # Second pass: if still over limit, remove oldest first.
+        if max_sessions and len(dirs) > max_sessions:
+            dirs.sort(key=lambda p: os.path.getmtime(p))
+            for path in dirs[: len(dirs) - max_sessions]:
+                try:
+                    shutil.rmtree(path, ignore_errors=True)
+                    removed += 1
+                except OSError:
+                    continue
+
+        return removed
     except OSError:
         pass
 
@@ -54,19 +81,20 @@ def _cleanup_old_sessions(data_dir, ttl):
 class SessionManager:
     """Owns session directories and the background cleanup thread."""
 
-    def __init__(self, data_dir=None, ttl=None):
+    def __init__(self, data_dir=None, ttl=None, max_sessions=None):
         self.data_dir = data_dir or config.Config.DATA_DIR
         self.ttl = ttl or config.Config.SESSION_TTL_SECONDS
+        self.max_sessions = max_sessions or config.Config.MAX_SESSIONS
         self._stop = threading.Event()
         os.makedirs(self.data_dir, exist_ok=True)
-        _cleanup_old_sessions(self.data_dir, self.ttl)
+        _cleanup_old_sessions(self.data_dir, self.ttl, self.max_sessions)
         self._thread = threading.Thread(target=self._sweep_loop, daemon=True)
         self._thread.start()
 
     def _sweep_loop(self):
         while not self._stop.wait(config.Config.CLEANUP_INTERVAL_SECONDS):
             try:
-                _cleanup_old_sessions(self.data_dir, self.ttl)
+                _cleanup_old_sessions(self.data_dir, self.ttl, self.max_sessions)
             except Exception:
                 continue
 

@@ -190,6 +190,46 @@ def main():
         check("reset clears session outputs",
               r.status_code == 200 and r2.get_json()["outputs"] == [])
 
+        # ---- magic-byte validation -------------------------------------------
+        # Upload a non-PDF file with .pdf extension
+        fake_pdf = os.path.join(tmp, "fake.pdf")
+        with open(fake_pdf, "wb") as fh:
+            fh.write(b"MZ\x90\x00" + b"\x00" * 100)  # EXE header, not PDF
+        with open(fake_pdf, "rb") as fh:
+            r = client.post("/api/upload",
+                            data={"pdfs": (fh, "malicious.pdf")},
+                            content_type="multipart/form-data")
+        payload = r.get_json()
+        check("magic-byte validation rejects non-PDF files",
+              r.status_code == 400 and not payload["ok"])
+
+        # ---- CSRF protection -------------------------------------------------
+        # POST without X-CSRF-Token should be rejected in non-testing mode
+        app_no_test = create_app(data_dir=os.path.join(tmp, "data-csrf"))
+        app_no_test.config["TESTING"] = False
+        client_no_test = app_no_test.test_client()
+        r = client_no_test.post("/api/reset", headers={})
+        check("CSRF protection rejects POSTs without token",
+              r.status_code == 403)
+
+        # ---- CSP header ------------------------------------------------------
+        r = client.get("/")
+        csp = r.headers.get("Content-Security-Policy", "")
+        check("Content-Security-Policy header is set",
+              "default-src 'self'" in csp)
+
+        # ---- security headers ------------------------------------------------
+        check("X-Content-Type-Options header is nosniff",
+              r.headers.get("X-Content-Type-Options") == "nosniff")
+        check("X-Frame-Options header is DENY",
+              r.headers.get("X-Frame-Options") == "DENY")
+
+        # ---- /health no longer leaks version ---------------------------------
+        r = client.get("/health")
+        body = r.get_json()
+        check("/health endpoint does not expose version",
+              "version" not in body)
+
         print("=" * 56)
         passed = sum(1 for _, ok in CHECKS if ok)
         print(f"Passed {passed}/{len(CHECKS)} web checks.")
